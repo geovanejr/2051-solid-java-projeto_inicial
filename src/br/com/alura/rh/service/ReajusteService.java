@@ -1,34 +1,25 @@
 package br.com.alura.rh.service;
 
-import br.com.alura.rh.ValidacaoException;
+import br.com.alura.rh.interfaces.ValidacaoReajuste;
 import br.com.alura.rh.model.Funcionario;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 public class ReajusteService {
 
+    private List<ValidacaoReajuste> validacoes;
+
+    public ReajusteService(List<ValidacaoReajuste> validacoes) {
+
+        this.validacoes = validacoes;
+    }
+
     public void ReajustarSalarioDoFuncionario(Funcionario funcionario, BigDecimal valorReajuste) {
 
-        BigDecimal salarioAtual = funcionario.getSalario();
+        validacoes.forEach(v -> v.validar(funcionario, valorReajuste));
 
-        BigDecimal percentualReajuste = valorReajuste.divide(salarioAtual, RoundingMode.HALF_UP);
-        if (percentualReajuste.compareTo(new BigDecimal("0.4")) > 0) {
-            throw new ValidacaoException("Reajuste nao pode ser superior a 40% do salario!");
-        }
-
-        LocalDate dataUltimoReajuste = funcionario.getDataUltimoReajuste();
-        LocalDate dataAtual = LocalDate.now();
-
-        var mesesDesdeUltimoReajuste = ChronoUnit.MONTHS.between(dataUltimoReajuste, dataAtual);
-
-        if (mesesDesdeUltimoReajuste < 6) {
-            throw new ValidacaoException("Intervalo de meses para reajuste deve ser maior que 5 meses");
-        }
-
-        BigDecimal salarioReajustado = salarioAtual.add(valorReajuste);
+        BigDecimal salarioReajustado = funcionario.getSalario().add(valorReajuste);
         funcionario.reajustarSalario(salarioReajustado);
     }
 }

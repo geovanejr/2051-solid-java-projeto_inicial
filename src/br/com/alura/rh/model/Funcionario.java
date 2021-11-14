@@ -67,4 +67,14 @@ public class Funcionario {
 		this.dataUltimoReajuste = dataUltimoReajuste;
 	}
 
+	@Override
+	public String toString() {
+		return "Funcionario{" +
+				"nome='" + nome + '\'' +
+				", cpf='" + cpf + '\'' +
+				", cargo=" + cargo +
+				", salario=" + salario +
+				", dataUltimoReajuste=" + dataUltimoReajuste +
+				'}';
+	}
 }
